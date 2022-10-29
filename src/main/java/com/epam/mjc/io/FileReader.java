@@ -1,7 +1,6 @@
 package com.epam.mjc.io;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,20 +12,15 @@ public class FileReader {
 
     public Profile getDataFromFile(File file) {
         StringBuilder input = new StringBuilder();
-        try {
-            java.io.FileReader reader = new java.io.FileReader(file);
+        try (java.io.FileReader reader = new java.io.FileReader(file)){
             int ch ;
             while ((ch = reader.read())!=-1){
-                input = input.append((char)ch);
+               input.append((char)ch);
             }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("Couldn't find specified file "+e.getMessage());
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new FileReaderException(e.getMessage());
         }
-        Profile result = parseInfo(input.toString());
-        return result;
+        return parseInfo(input.toString());
     }
 
     private Profile parseInfo (String info){
@@ -40,7 +34,6 @@ public class FileReader {
             val = temp.substring(temp.indexOf(" ")+1);
             pairs.put(key,val);
         }
-        Profile result = new Profile(pairs.get("Name"), Integer.parseInt(pairs.get("Age")),pairs.get("Email"),Long.parseLong(pairs.get("Phone")));
-        return result;
+        return new Profile(pairs.get("Name"), Integer.parseInt(pairs.get("Age")),pairs.get("Email"),Long.parseLong(pairs.get("Phone")));
     }
 }
