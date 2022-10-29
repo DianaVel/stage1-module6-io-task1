@@ -12,21 +12,21 @@ import java.util.stream.Collectors;
 public class FileReader {
 
     public Profile getDataFromFile(File file) {
-        String input = "";
+        StringBuilder input = new StringBuilder();
         try {
             java.io.FileReader reader = new java.io.FileReader(file);
             int ch ;
             while ((ch = reader.read())!=-1){
-                input = input+(char)ch;
+                input = input.append((char)ch);
             }
             reader.close();
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println("Couldn't find specified file "+e.getMessage());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
-
-        return parseInfo(input);
+        Profile result = parseInfo(input.toString());
+        return result;
     }
 
     private Profile parseInfo (String info){
